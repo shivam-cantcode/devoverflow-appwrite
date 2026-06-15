@@ -39,11 +39,6 @@ const LabelInputContainer = ({
   );
 };
 
-/**
- * ******************************************************************************
- * ![INFO]: for buttons, refer to https://ui.aceternity.com/components/tailwindcss-buttons
- * ******************************************************************************
- */
 const QuestionForm = ({ question }: { question?: Models.Document }) => {
   const { user } = useAuthStore();
   const [tag, setTag] = React.useState("");
@@ -91,33 +86,30 @@ const QuestionForm = ({ question }: { question?: Models.Document }) => {
   };
 
   const create = async () => {
-    if (!formData.attachment) throw new Error("Please upload an image");
+    let attachmentId: string | null = null;
 
-    const storageResponse = await storage.createFile(
-      questionAttachmentBucket,
+    if (formData.attachment) {
+      const storageResponse = await storage.createFile(
+        questionAttachmentBucket,
+        ID.unique(),
+        formData.attachment,
+      );
+
+      attachmentId = storageResponse.$id;
+    }
+
+    const response = await databases.createDocument(
+      db,
+      questionCollection,
       ID.unique(),
-      formData.attachment,
-    );
-
-    const res = await fetch("/api/question", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+      {
         title: formData.title,
         content: formData.content,
         authorId: formData.authorId,
         tags: Array.from(formData.tags),
-        attachmentId: storageResponse.$id,
-      }),
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to create question");
-    }
-
-    const response = await res.json();
+        attachmentId,
+      },
+    );
 
     loadConfetti();
 
@@ -227,28 +219,42 @@ const QuestionForm = ({ question }: { question?: Models.Document }) => {
       </LabelInputContainer>
       <LabelInputContainer>
         <Label htmlFor="image">
-          Image
+          Image (Optional)
           <br />
-          <small>
-            Add image to your question to make it more clear and easier to
-            understand.
-          </small>
+          <small>Add an image if it helps explain your question.</small>
         </Label>
+
         <Input
           id="image"
           name="image"
           accept="image/*"
-          placeholder="e.g. Is there an R function for finding the index of an element in a vector?"
           type="file"
+          className="bg-slate-900 text-white border-slate-700
+      file:bg-slate-800
+      file:text-white
+      file:border
+      file:border-slate-600
+      file:rounded-md
+      file:px-3
+      file:py-1
+      file:mr-4"
           onChange={(e) => {
             const files = e.target.files;
+
             if (!files || files.length === 0) return;
+
             setFormData((prev) => ({
               ...prev,
               attachment: files[0],
             }));
           }}
         />
+
+        {formData.attachment && (
+          <p className="text-sm text-green-400">
+            Selected: {formData.attachment.name}
+          </p>
+        )}
       </LabelInputContainer>
       <LabelInputContainer>
         <Label htmlFor="tag">
