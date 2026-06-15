@@ -210,7 +210,14 @@ Contributions are welcome.
 2. Create a feature branch
 
 ```bash
-git checkout -b feature-name
+git checkout -b feature-name<img width="1920" height="985" alt="Screenshot 2026-06-15 at 4 14 18 PM" src="https://github.com/user-attachments/assets/046baf92-1546-4a70-aa78-4eb2bca829c2" />
+<img width="1920" height="985" alt="Screenshot 2026-06-15 at 4 15 35 PM" src="https://github.com/user-attachments/assets/99f268e1-48f0-4bc3-9c5b-f73bd172192a" />
+<img width="1920" height="987" alt="Screenshot 2026-06-15 at 4 14 58 PM" src="https://github.com/user-attachments/assets/9ad4974a-8c38-4c02-acd9-1efb28254187" />
+<img width="1920" height="990" alt="Screenshot 2026-06-15 at 4 14 41 PM" src="https://github.com/user-attachments/assets/97323a8f-b90a-4877-9dd2-5bf0258b261a" />
+<img width="920" height="853" alt="Screenshot 2026-06-15 at 4 14 29 PM" src="https://github.com/user-attachments/assets/082c9948-60ee-44df-ae25-19d7af8293c0" />
+<img width="1920" height="985" alt="Screenshot 2026-06-15 at 4 14 18 PM" src="https://github.com/user-attachments/assets/78011f5c-bf08-4827-8469-1091b5d1a0ce" />
+<img width="1920" height="985" alt="Screenshot 2026-06-15 at 4 14 18 PM" src="https://github.com/user-attachments/assets/7231b41a-0e47-4604-ab09-21d08fdc96e0" />
+
 ```
 
 3. Commit changes
