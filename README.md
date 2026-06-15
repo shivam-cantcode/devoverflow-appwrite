@@ -122,14 +122,7 @@ NEXT_PUBLIC_APPWRITE_PROJECT_ID=YOUR_PROJECT_ID
 
 APPWRITE_API_KEY=YOUR_API_KEY
 
-APPWRITE_DATABASE_ID=main-stackflow
 
-APPWRITE_QUESTION_COLLECTION=questions
-APPWRITE_ANSWER_COLLECTION=answers
-APPWRITE_COMMENT_COLLECTION=comments
-APPWRITE_VOTE_COLLECTION=votes
-
-APPWRITE_QUESTION_BUCKET=question-attachments
 ```
 
 ---
@@ -193,11 +186,7 @@ git push origin main
 Add screenshots here:
 
 ```md
-<img width="1920" height="985" alt="Screenshot 2026-06-15 at 4 15 35 PM" src="https://github.com/user-attachments/assets/20322f4f-6691-489c-89a8-6649d8284968" />
-<img width="1920" height="987" alt="Screenshot 2026-06-15 at 4 14 58 PM" src="https://github.com/user-attachments/assets/12795728-3e77-472c-b859-705e904a3877" />
-<img width="1920" height="990" alt="Screenshot 2026-06-15 at 4 14 41 PM" src="https://github.com/user-attachments/assets/bfa20792-2cb0-48d6-87f0-d85d99f73f1d" />
-<img width="920" height="853" alt="Screenshot 2026-06-15 at 4 14 29 PM" src="https://github.com/user-attachments/assets/451bdf62-bc02-4afe-b145-e3ef0e6f754d" />
-<img width="1920" height="985" alt="Screenshot 2026-06-15 at 4 14 18 PM" src="https://github.com/user-attachments/assets/8ea887f4-dd6e-4b80-8d53-a312cd3d9064" />
+
 
 ---
 
