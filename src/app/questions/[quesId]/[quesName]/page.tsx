@@ -57,54 +57,113 @@ const Page = async ({
   ]);
 
   // since it is dependent on the question, we fetch it here outside of the Promise.all
-  const author = await users.get<UserPrefs>(question.authorId);
+  let author = {
+    $id: question.authorId,
+    name: "Unknown User",
+    prefs: {
+      reputation: 0,
+    },
+  };
+
+  try {
+    const user = await users.get<UserPrefs>(question.authorId);
+
+    author = {
+      $id: user.$id,
+      name: user.name,
+      prefs: {
+        reputation: user.prefs?.reputation || 0,
+      },
+    };
+  } catch (error) {
+    console.log("Question author not found:", question.authorId);
+  }
+
   [comments.documents, answers.documents] = await Promise.all([
     Promise.all(
       comments.documents.map(async (comment) => {
-        const author = await users.get<UserPrefs>(comment.authorId);
-        return {
-          ...comment,
-          author: {
+        let commentAuthor = {
+          $id: comment.authorId,
+          name: "Unknown User",
+          reputation: 0,
+        };
+
+        try {
+          const author = await users.get<UserPrefs>(comment.authorId);
+
+          commentAuthor = {
             $id: author.$id,
             name: author.name,
-            reputation: author.prefs.reputation,
-          },
+            reputation: author.prefs?.reputation || 0,
+          };
+        } catch {}
+
+        return {
+          ...comment,
+          author: commentAuthor,
         };
       }),
     ),
+
     Promise.all(
       answers.documents.map(async (answer) => {
         const [author, comments, upvotes, downvotes] = await Promise.all([
-          users.get<UserPrefs>(answer.authorId),
+          (async () => {
+            try {
+              return await users.get<UserPrefs>(answer.authorId);
+            } catch {
+              return {
+                $id: answer.authorId,
+                name: "Unknown User",
+                prefs: {
+                  reputation: 0,
+                },
+              };
+            }
+          })(),
+
           databases.listDocuments(db, commentCollection, [
             Query.equal("typeId", answer.$id),
             Query.equal("type", "answer"),
             Query.orderDesc("$createdAt"),
           ]),
+
           databases.listDocuments(db, voteCollection, [
             Query.equal("typeId", answer.$id),
             Query.equal("type", "answer"),
             Query.equal("voteStatus", "upvoted"),
-            Query.limit(1), // for optimization
+            Query.limit(1),
           ]),
+
           databases.listDocuments(db, voteCollection, [
             Query.equal("typeId", answer.$id),
             Query.equal("type", "answer"),
             Query.equal("voteStatus", "downvoted"),
-            Query.limit(1), // for optimization
+            Query.limit(1),
           ]),
         ]);
 
         comments.documents = await Promise.all(
           comments.documents.map(async (comment) => {
-            const author = await users.get<UserPrefs>(comment.authorId);
-            return {
-              ...comment,
-              author: {
+            let commentAuthor = {
+              $id: comment.authorId,
+              name: "Unknown User",
+              reputation: 0,
+            };
+
+            try {
+              const author = await users.get<UserPrefs>(comment.authorId);
+
+              commentAuthor = {
                 $id: author.$id,
                 name: author.name,
-                reputation: author.prefs.reputation,
-              },
+                reputation: author.prefs?.reputation || 0,
+              };
+            } catch {}
+
+            return {
+              ...comment,
+              author: commentAuthor,
             };
           }),
         );
@@ -117,7 +176,7 @@ const Page = async ({
           author: {
             $id: author.$id,
             name: author.name,
-            reputation: author.prefs.reputation,
+            reputation: author.prefs?.reputation || 0,
           },
         };
       }),
@@ -178,18 +237,21 @@ const Page = async ({
               className="rounded-xl p-4"
               source={question.content}
             />
-            <picture>
-              <img
-                src={
-                  storage.getFilePreview(
-                    questionAttachmentBucket,
-                    question.attachmentId,
-                  ).href
-                }
-                alt={question.title}
-                className="mt-3 rounded-lg"
-              />
-            </picture>
+            {question.attachmentId && (
+              <picture>
+                <img
+                  src={
+                    storage.getFilePreview(
+                      questionAttachmentBucket,
+                      question.attachmentId,
+                    ).href
+                  }
+                  alt={question.title}
+                  className="mt-3 rounded-lg"
+                />
+              </picture>
+            )}
+
             <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
               {question.tags.map((tag: string) => (
                 <Link
