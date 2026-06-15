@@ -99,24 +99,30 @@ const QuestionForm = ({ question }: { question?: Models.Document }) => {
       formData.attachment,
     );
 
-    const response = await databases.createDocument(
-      db,
-      questionCollection,
-      ID.unique(),
-      {
+    const res = await fetch("/api/question", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         title: formData.title,
         content: formData.content,
         authorId: formData.authorId,
         tags: Array.from(formData.tags),
         attachmentId: storageResponse.$id,
-      },
-    );
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to create question");
+    }
+
+    const response = await res.json();
 
     loadConfetti();
 
     return response;
   };
-
   const update = async () => {
     if (!question) throw new Error("Please provide a question");
 
